@@ -38,7 +38,10 @@ jobs:
     - name: Install dependencies
       run: sudo apt update && sudo apt install -y cmake libusb-1.0-0-dev
 
+    - name: Build artifacts
+      run: mkdir build && cd build && cmake .. && make
+
     - uses: actions/upload-artifact@v5
       with:
         name: ${{ matrix.targetos }}-${{ matrix.targetarch }}_libusb4java.so
-        path: src/libusb4java.so
+        path: build/src/libusb4java.so
