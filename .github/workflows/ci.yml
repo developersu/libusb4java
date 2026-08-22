@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, ci ]
+  pull_request:
+    branches: [ master, ci ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            targetos: linux
+            targetarch: amd64
+          - os: ubuntu-22.04
+            targetos: linux
+            targetarch: i386
+          - os: ubuntu-22.04-arm
+            targetos: linux
+            targetarch: arm64
+          - os: ubuntu-22.04-arm
+            targetos: linux
+            targetarch: armhf
+
+    steps:
+    - uses: actions/checkout@v7
+    - name: Set up JDK
+      uses: actions/setup-java@v5
+      with:
+        distribution: jetbrains
+        java-version: 25
+
+    - name: Install dependencies
+      run: sudo apt update && sudo apt install -y cmake libusb-1.0-0-dev
+
+    - uses: actions/upload-artifact@v5
+      with:
+        name: ${{ matrix.targetos }}-${{ matrix.targetarch }}_libusb4java.so
+        path: src/libusb4java.so
