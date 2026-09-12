@@ -4,5 +4,5 @@
 # unzip -q libusb.zip
 # cd libusb
 vcpkg install libusb
-export LibUsb_INCLUDE_DIR=C:/vcpkg/packages/libusb_x64-windows/include/
-export LibUsb_LIBRARIES=C:/vcpkg/packages/libusb_x64-windows/lib/
+echo LibUsb_INCLUDE_DIR=C:/vcpkg/packages/libusb_x64-windows/include/  >> $GITHUB_ENV
+echo LibUsb_LIBRARIES=C:/vcpkg/packages/libusb_x64-windows/lib/  >> $GITHUB_ENV
