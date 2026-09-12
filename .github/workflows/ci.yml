@@ -51,7 +51,7 @@ jobs:
       run: bash ci/deps_${{ matrix.targetos }}.sh
 
     - name: Build artifacts
-      run: mkdir build && cd build && cmake .. && make
+      run: mkdir build && cd build && cmake .. && cmake --build .
 
     - uses: actions/upload-artifact@v7
       with:
