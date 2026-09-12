@@ -4,3 +4,5 @@
 # unzip -q libusb.zip
 # cd libusb
 vcpkg install libusb
+export LibUsb_INCLUDE_DIR=C:/vcpkg/packages/libusb_x64-windows/include/
+export LibUsb_LIBRARIES=C:/vcpkg/packages/libusb_x64-windows/lib/
