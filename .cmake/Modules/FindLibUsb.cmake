@@ -40,7 +40,7 @@ if (LibUsb_USE_STATIC_LIBS)
     endif()
 endif()
 
-set(LibUsb_LIBRARY_NAMES "usb-1.0")
+set(LibUsb_LIBRARY_NAMES "libusb-1.0")
 
 # Search libraries and include directories with pkg-config when possible
 find_package(PkgConfig QUIET)
