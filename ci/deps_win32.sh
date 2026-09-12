@@ -14,4 +14,4 @@ echo "--- lib"
 ls 'C:\vcpkg\packages\libusb_x64-windows\lib\'
 
 echo 'LibUsb_INCLUDE_HINTS=C:\vcpkg\packages\libusb_x64-windows\include\' >> $GITHUB_ENV
-echo 'LibUsb_LIBRARY_HINTS=C:\vcpkg\packages\libusb_x64-windows\lib\' >> $GITHUB_ENV
+echo 'LibUsb_LIBRARY_HINTS=C:\vcpkg\packages\libusb_x64-windows\bin\' >> $GITHUB_ENV
