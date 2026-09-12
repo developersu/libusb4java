@@ -30,6 +30,11 @@
 # See COPYING file for copying conditions.
 # ============================================================================
 
+if(DEFINED ENV{LIBUSB_ROOT})
+    set(LibUsb_LIBRARY_HINTS "$ENV{LIBUSB_ROOT}/lib")
+    set(LibUsb_INCLUDE_HINTS "$ENV{LIBUSB_ROOT}/include")
+endif()
+
 # Change the find-library suffix order in case we prefer to use static libs
 set(LibUsb_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
 if (LibUsb_USE_STATIC_LIBS)
