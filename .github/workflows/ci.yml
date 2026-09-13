@@ -34,12 +34,12 @@ jobs:
 #         - os: macos-15-intel
 #           targetos: apple
 #           targetarch: amd64
-          - os: windows-latest
-            targetos: win32
-            targetarch: amd64
-#         - os: windows-2022
+#         - os: windows-latest
 #           targetos: win32
-#           targetarch: i386
+#           targetarch: amd64
+          - os: windows-2022
+            targetos: win32
+            targetarch: i386
 
     steps:
     - uses: actions/checkout@v7
