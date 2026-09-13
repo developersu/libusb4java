@@ -22,7 +22,7 @@ jobs:
 #         - os: ubuntu-latest
 #           targetos: linux
 #           targetarch: i386
-#         - os: ubuntu-24.04-arm
+#         - os: ubuntu-24.04
 #           targetos: linux
 #           targetarch: arm64
 #         - os: ubuntu-24.04-arm
@@ -36,7 +36,7 @@ jobs:
 #           targetarch: amd64
 #         - os: windows-latest
 #           targetos: win32
-#           targetarch: amd64
+#           targetarch: x64
           - os: windows-2022
             targetos: win32
             targetarch: i386
@@ -53,9 +53,11 @@ jobs:
       run: bash ci/deps_${{ matrix.targetos }}.sh
 
     - name: Build artifacts
-      run: mkdir build && cd build && cmake .. && cmake --build . --config Release
+      run: mkdir build && cd build && cmake .. && cmake --build . --config Release && \
+        jshell ./ci/mkfolder.jsh && \
+        mv build/src/Release/*usb4java.${{ env.EXTENSION }} ./publish/*/
 
     - uses: actions/upload-artifact@v7
       with:
         name: ${{ matrix.targetos }}-${{ matrix.targetarch }}_libusb4java.${{ env.EXTENSION }}
-        path: build/src/Release/*usb4java.${{ env.EXTENSION }}
+        path: publish/*
