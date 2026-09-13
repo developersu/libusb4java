@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    env:
+      NAME_POSTFIX: "libusb4java.so"
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -55,5 +57,5 @@ jobs:
 
     - uses: actions/upload-artifact@v7
       with:
-        name: ${{ matrix.targetos }}-${{ matrix.targetarch }}_libusb4java.so
+        name: ${{ matrix.targetos }}-${{ matrix.targetarch }}_${{ env.NAME_POSTFIX }}
         path: build/src/Release/*usb4java.*
