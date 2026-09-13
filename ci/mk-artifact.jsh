@@ -16,5 +16,17 @@ var arch = switch(archFullName) {
                        str.equals("armv7l") -> "arm";
   default -> archFullName;
 }
-new File("publish/"+os+"-"+arch).mkdirs();
+
+var extension = switch(os) {
+  case "win32" -> "dll";
+  case "darwin" -> "dylib";
+  default -> "so";
+}
+
+var dir = new File("publish/"+os+"-"+arch);
+dir.mkdirs();
+
+var lib = Files.walk(Paths.get("build/src/Release/")).filter(path -> path.toString().endsWith(extension)).toList().getFirst();
+
+Files.move(lib, dir.toPath().resolve(lib.getFileName()), StandardCopyOption.ATOMIC_MOVE);
 /exit

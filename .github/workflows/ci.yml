@@ -9,8 +9,6 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    env:
-      EXTENSION: "so"
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -34,12 +32,9 @@ jobs:
 #         - os: macos-15-intel
 #           targetos: apple
 #           targetarch: amd64
-#         - os: windows-latest
-#           targetos: win32
-#           targetarch: x64
-          - os: windows-2022
-            targetos: win32
-            targetarch: i386
+         - os: windows-latest
+           targetos: win32
+           targetarch: x64
 
     steps:
     - uses: actions/checkout@v7
@@ -53,9 +48,8 @@ jobs:
       run: bash ci/deps_${{ matrix.targetos }}.sh
 
     - name: Build artifacts
-      run: mkdir build && cd build && cmake .. && cmake --build . --config Release && cd .. && jshell ci/mkfolder.jsh && mv build/src/Release/*usb4java.${{ env.EXTENSION }} publish/*/
+      run: mkdir build && cd build && cmake .. && cmake --build . --config Release && cd .. && jshell ci/mk-artifact.jsh
 
     - uses: actions/upload-artifact@v7
       with:
-        name: ${{ matrix.targetos }}-${{ matrix.targetarch }}_libusb4java.${{ env.EXTENSION }}
         path: publish/*
