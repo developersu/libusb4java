@@ -51,9 +51,9 @@ jobs:
       run: bash ci/deps_${{ matrix.targetos }}.sh
 
     - name: Build artifacts
-      run: mkdir build && cd build && cmake .. && cmake --build .
+      run: mkdir build && cd build && cmake .. && cmake --build . --config Release
 
     - uses: actions/upload-artifact@v7
       with:
         name: ${{ matrix.targetos }}-${{ matrix.targetarch }}_libusb4java.so
-        path: build/src/libusb4java.(so|dll)
+        path: build/src/Release/libusb4java.(so|dll)
