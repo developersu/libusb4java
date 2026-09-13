@@ -56,4 +56,4 @@ jobs:
     - uses: actions/upload-artifact@v7
       with:
         name: ${{ matrix.targetos }}-${{ matrix.targetarch }}_libusb4java.so
-        path: build/src/Release/(libusb4java.so|usb4java.dll)
+        path: build/src/Release/*usb4java.*
