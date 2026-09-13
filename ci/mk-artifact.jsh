@@ -26,7 +26,8 @@ var extension = switch(os) {
 var dir = new File("publish/"+os+"-"+arch);
 dir.mkdirs();
 
-var lib = Files.walk(Paths.get("build/src/Release/")).filter(path -> path.toString().endsWith(extension)).toList().getFirst();
+var artifactFolder = Files.exists(Paths.get("build/src/Release/")) ? Paths.get("build/src/Release/") : Paths.get("build/src/");
+var lib = Files.walk(artifactFolder).filter(path -> path.toString().endsWith(extension)).toList().getFirst();
 
 Files.move(lib, dir.toPath().resolve(lib.getFileName()), StandardCopyOption.ATOMIC_MOVE);
 /exit
