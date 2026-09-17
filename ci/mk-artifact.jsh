@@ -20,13 +20,16 @@ var arch = switch(archFullName) {
   default -> archFullName;
 }
 
+System.out.println("Arch full name: '"+archFullName+"'");
+System.out.println("Arch internal name: '"+arch+"'");
+
 var extension = switch(os) {
   case "win32" -> "dll";
   case "darwin" -> "dylib";
   default -> "so";
 }
 
-System.out.println("Looking for "+extension);
+System.out.println("Looking for [lib]usbjava."+extension);
 
 var dir = new File("publish/"+os+"-"+arch);
 dir.mkdirs();
