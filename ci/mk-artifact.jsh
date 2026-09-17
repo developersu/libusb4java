@@ -1,9 +1,12 @@
-var osFullName = System.getProperty("os.name").toLowerCase();
+var osFullName = System.getProperty("os.name").toLowerCase().replace(" ", "");
 var os = switch(osFullName) {
   case String str when str.contains("windows") -> "win32";
   case String str when str.contains("macos") -> "darwin";
   default -> osFullName;
 }
+
+System.out.println("OS full name is '"+osFullName+"'");
+System.out.println("OS internal name: '"+os+"'");
 
 var archFullName = System.getProperty("os.arch").toLowerCase();
 var arch = switch(archFullName) {
@@ -23,14 +26,12 @@ var extension = switch(os) {
   default -> "so";
 }
 
+System.out.println("Looking for "+extension);
+
 var dir = new File("publish/"+os+"-"+arch);
 dir.mkdirs();
 
 var artifactFolder = Files.exists(Paths.get("build/src/Release/")) ? Paths.get("build/src/Release/") : Paths.get("build/src/");
-System.out.println(".");
-Files.walk(Paths.get(".")).forEach(System.out::println);
-System.out.println("build/src");
-Files.walk(Paths.get("build/src")).forEach(System.out::println);
 var lib = Files.walk(artifactFolder).filter(path -> path.toString().endsWith(extension)).toList().getFirst();
 
 Files.move(lib, dir.toPath().resolve(lib.getFileName()), StandardCopyOption.ATOMIC_MOVE);
