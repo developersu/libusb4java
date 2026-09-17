@@ -27,7 +27,11 @@ var dir = new File("publish/"+os+"-"+arch);
 dir.mkdirs();
 
 var artifactFolder = Files.exists(Paths.get("build/src/Release/")) ? Paths.get("build/src/Release/") : Paths.get("build/src/");
-var lib = Files.walk(artifactFolder).forEach(System.out::println).filter(path -> path.toString().endsWith(extension)).toList().getFirst();
+System.out.println(".");
+Files.walk(Paths.get(".")).forEach(System.out::println);
+System.out.println("build/src");
+Files.walk(Paths.get("build/src")).forEach(System.out::println);
+var lib = Files.walk(artifactFolder).filter(path -> path.toString().endsWith(extension)).toList().getFirst();
 
 Files.move(lib, dir.toPath().resolve(lib.getFileName()), StandardCopyOption.ATOMIC_MOVE);
 /exit
