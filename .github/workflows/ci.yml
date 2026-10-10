@@ -14,35 +14,41 @@ jobs:
       fail-fast: false
       matrix:
         include:
+## windows arm
+#         - os: windows-11-arm
+#           targetos: win32
+#           targetarch: aarch64
+#           ext: dll
+## win32-x86-64
+#         - os: windows-latest
+#           targetos: win32
+#           targetarch: x86-64
+#           ext: dll
 # linux-x86-64          
          - os: ubuntu-latest
            targetos: linux
            targetarch: x86-64
            ext: so
-## windows arm
-#         - os: windows-11-arm
-#           targetos: win32
-#           targetarch: aarch64
 ## arm | armhf astr32 armv7l
 #         - os: ubuntu-24.04-arm
 #           targetos: linux
 #           targetarch: armhf
+#           ext: so
 ## linux-aarch64
 #         - os: ubuntu-24.04-arm
 #           targetos: linux
 #           targetarch: aarch64
-## win32-x86-64
-#         - os: windows-latest
-#           targetos: win32
-#           targetarch: x86-64
+#           ext: so
 ## darwin-x86-64
 #         - os: macos-15-intel
 #           targetos: darwin
 #           targetarch: x86-64
+#           ext: dylib
 ## darwin-arm-64
 #         - os: macos-14
 #           targetos: darwin
 #           targetarch: aarch64
+#           ext: dylib
 
     steps:
     - uses: actions/checkout@v7
@@ -53,16 +59,11 @@ jobs:
         java-version: 25
 
     - name: Install dependencies
-      env: 
-        EXTENSION: ${{ matrix.ext }}
-      run: bash echo $EXTENSION
-#    - name: Install dependencies
-#      run: bash ci/deps_${{ matrix.targetos }}.sh
-#
-#    - name: Build artifacts
-#      run: mkdir build && cd build && cmake .. && cmake --build . --config Release && cd .. && jshell ci/mk-artifact.jsh
-#
-#    - uses: actions/upload-artifact@v7
-#      with:
-#        name: ${{ matrix.targetos }}-${{ matrix.targetarch }}
-#        path: publish/*
+      run: bash ci/deps_${{ matrix.targetos }}.sh
+
+    - name: Build artifacts
+      run: mkdir build && cd build && cmake .. && cmake --build . --config Release && cd .. && mkdir -p Release/org/usb4java/{{ matrix.targetos }}-{{ matrix.targetarch }} && mv ./*.{{ matrix.ext }} Release/org/usb4java/{{ matrix.targetos }}-{{ matrix.targetarch }}/libusb4java.${{ matrix.ext }} || mv ./Release/*.{{ matrix.ext }} Release/org/usb4java/{{ matrix.targetos }}-{{ matrix.targetarch }}/libusb4java.${{ matrix.ext }} && cd Release && jar cf ./libusb4java-1.0.30-{{ matrix.targetos }}-{{ matrix.targetarch }}.jar *
+
+    - uses: actions/upload-artifact@v7
+      with:
+        path: Release/libusb4java-1.0.30-bundle.jar
