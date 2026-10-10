@@ -31,7 +31,7 @@ var extension = switch(os) {
 
 System.out.println("Looking for [lib]usbjava."+extension);
 
-var dir = new File("publish/"+os+"-"+arch);
+var dir = new File("publish/org/usb4java/"+os+"-"+arch);
 dir.mkdirs();
 
 var artifactFolder = Files.exists(Paths.get("build/src/Release/")) ? Paths.get("build/src/Release/") : Paths.get("build/src/");
