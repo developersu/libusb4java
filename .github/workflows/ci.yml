@@ -18,6 +18,8 @@ jobs:
          - os: ubuntu-latest
            targetos: linux
            targetarch: x86-64
+           env:
+             EXTENSION: so
 ## windows arm
 #         - os: windows-11-arm
 #           targetos: win32
@@ -52,7 +54,7 @@ jobs:
         java-version: 25
 
     - name: Install dependencies
-      run: bash printenv
+      run: bash echo $EXTENSION
 #    - name: Install dependencies
 #      run: bash ci/deps_${{ matrix.targetos }}.sh
 #
