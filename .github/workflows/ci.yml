@@ -62,7 +62,17 @@ jobs:
       run: bash ci/deps_${{ matrix.targetos }}.sh
 
     - name: Build artifacts
-      run: mkdir build && cd build && cmake .. && cmake --build . --config Release && cd .. && mkdir -p Release/org/usb4java/{{ matrix.targetos }}-{{ matrix.targetarch }} && mv ./*.{{ matrix.ext }} Release/org/usb4java/{{ matrix.targetos }}-{{ matrix.targetarch }}/libusb4java.${{ matrix.ext }} || mv ./Release/*.{{ matrix.ext }} Release/org/usb4java/{{ matrix.targetos }}-{{ matrix.targetarch }}/libusb4java.${{ matrix.ext }} && cd Release && jar cf ./libusb4java-1.0.30-{{ matrix.targetos }}-{{ matrix.targetarch }}.jar *
+      run: >-
+        mkdir build && 
+        cd build && 
+        cmake .. && 
+        cmake --build . --config Release && 
+        cd .. && 
+        mkdir -p Release/org/usb4java/{{ matrix.targetos }}-{{ matrix.targetarch }} &&
+        mv ./build/src/*.{{ matrix.ext }} Release/org/usb4java/{{ matrix.targetos }}-{{ matrix.targetarch }}/libusb4java.${{ matrix.ext }} || 
+        mv ./build/src/Release/*.{{ matrix.ext }} Release/org/usb4java/{{ matrix.targetos }}-{{ matrix.targetarch }}/libusb4java.${{ matrix.ext }} &&
+        cd Release &&
+        jar cf ./libusb4java-1.0.30-{{ matrix.targetos }}-{{ matrix.targetarch }}.jar *
 
     - uses: actions/upload-artifact@v7
       with:
