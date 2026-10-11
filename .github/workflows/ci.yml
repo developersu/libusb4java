@@ -58,7 +58,7 @@ jobs:
         java-version: 25
 
     - name: Install dependencies
-      run: bash ci/deps_${{ matrix.targetos }}.sh
+      run: bash ci/deps_${{ matrix.ext }}.sh
 
     - name: Build artifacts
       run: >-
