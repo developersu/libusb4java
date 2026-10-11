@@ -1,5 +1,5 @@
 #!/bin/bash
-# Download + extract libusb $VERSION source into the workspace (no package manager).
+# Download + extract libusb $VERSION source into the workspace
 # Sourced by the per-platform deps_*.sh scripts. After sourcing, these are set:
 #   LIBUSB_VERSION  libusb version to build (single source of truth: workflow VERSION)
 #   LIBUSB_BUILD_DIR  workspace dir that holds the source tree
