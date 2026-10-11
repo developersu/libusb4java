@@ -67,12 +67,12 @@ jobs:
         cmake .. && 
         cmake --build . --config Release && 
         cd .. && 
-        mkdir -p Release/org/usb4java/{{ matrix.target }} &&
-        (mv build/src/Release/*usb4java.{{ matrix.ext }} Release/org/usb4java/{{ matrix.target }}/libusb4java.${{ matrix.ext }} |
-         mv build/src/*usb4java.{{ matrix.ext }}         Release/org/usb4java/{{ matrix.target }}/libusb4java.${{ matrix.ext }}) &&
-        cd Release &&
+        mkdir -p publish/org/usb4java/{{ matrix.target }} &&
+        (mv build/src/Release/*usb4java.{{ matrix.ext }} publish/org/usb4java/{{ matrix.target }}/libusb4java.${{ matrix.ext }} |
+         mv build/src/*usb4java.{{ matrix.ext }}         publish/org/usb4java/{{ matrix.target }}/libusb4java.${{ matrix.ext }}) &&
+        cd publish &&
         jar cf ./libusb4java-1.0.30-{{ matrix.target }}.jar *
 
     - uses: actions/upload-artifact@v7
       with:
-        path: Release/libusb4java-1.0.30-bundle.jar
+        path: publish/libusb4java-1.0.30-bundle.jar
