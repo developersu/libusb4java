@@ -12,7 +12,9 @@ sudo apt install -y build-essential autoconf automake libtool pkg-config
 
 cd "${LIBUSB_SRC}"
 autoreconf -fi
-./configure --prefix="${LIBUSB_PREFIX}" --disable-shared --enable-static --disable-udev
+# -fPIC is required: libusb4java.so is a shared object and pulls libusb's
+# objects out of the static .a, so they must be position-independent.
+CFLAGS="-fPIC" ./configure --prefix="${LIBUSB_PREFIX}" --disable-shared --enable-static --disable-udev
 make -j"$(nproc)"
 make install
 

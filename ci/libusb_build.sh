@@ -9,7 +9,15 @@ set -euo pipefail
 
 # VERSION is the single source of truth, set in .github/workflows/ci.yml.
 LIBUSB_VERSION="${VERSION:?ERROR: VERSION is not set; define it in .github/workflows/ci.yml}"
-LIBUSB_BUILD_DIR="${GITHUB_WORKSPACE}/libusb-build"
+
+# On Windows (Git Bash) GITHUB_WORKSPACE is a Windows path (D:\a\...); the bash
+# tools in this script need a POSIX path, so convert it. On Linux/macOS it is
+# already POSIX and cygpath is absent, so leave it untouched.
+WORKSPACE="${GITHUB_WORKSPACE}"
+if [ -n "${MSYSTEM:-}" ]; then
+    WORKSPACE="$(cygpath -u "${GITHUB_WORKSPACE}")"
+fi
+LIBUSB_BUILD_DIR="${WORKSPACE}/libusb-build"
 LIBUSB_PREFIX="${LIBUSB_BUILD_DIR}/prefix"
 LIBUSB_SRC="${LIBUSB_BUILD_DIR}/libusb-${LIBUSB_VERSION}"
 
