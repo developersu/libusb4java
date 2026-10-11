@@ -13,10 +13,12 @@ MSBUILD="$(vswhere -latest -find 'MSBuild\**\Bin\MSBuild.exe' | head -n1)"
 [ -n "${MSBUILD}" ] || { echo "ERROR: MSBuild not found via vswhere" >&2; exit 1; }
 
 # Build the static lib (libusb_static.vcxproj -> libusb-1.0.lib).
-# MSYS2_ARG_CONV_EXCL stops Git Bash from mangling the backslash project path
-# and the /p:... arguments before they reach MSBuild.
+# The .vcxproj lives inside the extracted libusb source tree, so pass its
+# absolute Windows path (cygpath -w). MSYS2_ARG_CONV_EXCL stops Git Bash from
+# mangling the backslash path and the /p:... arguments before they reach MSBuild.
+VCPROJ_WIN="$(cygpath -w "${LIBUSB_SRC}/msvc/libusb_static.vcxproj")"
 export MSYS2_ARG_CONV_EXCL="*"
-"${MSBUILD}" "msvc/libusb_static.vcxproj" /p:Configuration=Release /p:Platform=x64 /m /v:minimal
+"${MSBUILD}" "${VCPROJ_WIN}" /p:Configuration=Release /p:Platform=x64 /m /v:minimal
 
 # msbuild emits the .lib under <src>/build/<toolset>/<platform>/<config>/lib/
 LIB_ARTIFACT="$(find "${LIBUSB_SRC}/build" -name 'libusb-1.0.lib' 2>/dev/null | head -n1)"
