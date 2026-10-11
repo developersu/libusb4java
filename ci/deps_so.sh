@@ -1,31 +1,32 @@
 #!/bin/bash
+# Build a self-contained static libusb from source for Linux.
+# apt has no static libusb-1.0.a, so we build one. --disable-udev keeps the .a
+# free of a libudev dependency so libusb4java.so stays fully self-contained.
 set -euo pipefail
 
-# apt ships no static libusb-1.0.a, so build one from source.
-# --disable-udev keeps the .a free of a libudev dependency -> fully self-contained.
+# shellcheck source=ci/libusb_build.sh
+source ci/libusb_build.sh
+
 sudo apt update -y
 sudo apt install -y build-essential autoconf automake libtool pkg-config
 
-LIBUSB_VERSION="${VERSION}"
-PREFIX=/usr/local
-
-curl -L https://github.com/libusb/libusb/releases/download/v${LIBUSB_VERSION}/libusb-${LIBUSB_VERSION}.tar.bz2 | tar xj
-cd "libusb-${LIBUSB_VERSION}"
+cd "${LIBUSB_SRC}"
 autoreconf -fi
-./configure --prefix="$PREFIX" --disable-shared --enable-static --disable-udev
+./configure --prefix="${LIBUSB_PREFIX}" --disable-shared --enable-static --disable-udev
 make -j"$(nproc)"
 make install
 
-test -f "$PREFIX/lib/libusb-1.0.a" || { echo "ERROR: static libusb-1.0.a not built" >&2; exit 1; }
+test -f "${LIBUSB_PREFIX}/lib/libusb-1.0.a" || { echo "ERROR: static libusb-1.0.a not built" >&2; exit 1; }
+test -f "${LIBUSB_PREFIX}/include/libusb-1.0/libusb.h" || { echo "ERROR: libusb-1.0/libusb.h not installed" >&2; exit 1; }
 
 # Version guard: the built libusb must match the workflow VERSION exactly.
-INSTALLED="$(grep -m1 '^Version:' "$PREFIX/lib/pkgconfig/libusb-1.0.pc" | awk '{print $2}')"
-if [ "$INSTALLED" != "$LIBUSB_VERSION" ]; then
-    echo "ERROR: built libusb version is '$INSTALLED', expected '$LIBUSB_VERSION'" >&2
+INSTALLED="$(grep -m1 '^Version:' "${LIBUSB_PREFIX}/lib/pkgconfig/libusb-1.0.pc" | awk '{print $2}')"
+if [ "${INSTALLED}" != "${LIBUSB_VERSION}" ]; then
+    echo "ERROR: built libusb version is '${INSTALLED}', expected '${LIBUSB_VERSION}'" >&2
     exit 1
 fi
 
 # LIBUSB_ROOT -> FindLibUsb.cmake uses <root>/lib and <root>/include as search hints
-echo "LIBUSB_ROOT=$PREFIX" >> "$GITHUB_ENV"
+echo "LIBUSB_ROOT=${LIBUSB_PREFIX}" >> "$GITHUB_ENV"
 # Static libusb on Linux needs pthread/rt linked into libusb4java.so
 echo "LIBUSB_LDFLAGS=-lpthread -lrt" >> "$GITHUB_ENV"
