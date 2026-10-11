@@ -12,7 +12,6 @@ env:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
@@ -67,7 +66,7 @@ jobs:
       run: >-
         mkdir build && 
         cd build && 
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DLibUsb_USE_STATIC_LIBS=${{ matrix.static }} -DLibUsb_LDFLAGS="${{ env.LIBUSB_LDFLAGS }}" &&
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DLibUsb_USE_STATIC_LIBS=${{ matrix.static }} -DLibUsb_LDFLAGS="${{ env.LIBUSB_LDFLAGS }}" &&
         cmake --build . --config Release &&
         cd .. && 
         mkdir -p publish/org/usb4java/${{ matrix.target }} &&
@@ -77,5 +76,29 @@ jobs:
 
     - uses: actions/upload-artifact@v7
       with:
+        name: libusb4java-${{ matrix.target }}
         path: publish/libusb4java-${{ env.VERSION }}-${{ matrix.target }}.jar
+        if-no-files-found: error
+        archive: false
+
+  bundle:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/download-artifact@v7
+      with:
+        path: jars
+        merge-multiple: true
+    - name: Pack bundle jar
+      run: |
+        mkdir -p bundle
+        cp jars/libusb4java-${{ env.VERSION }}-*.jar bundle/
+        cp pom.xml "bundle/libusb4java-${{ env.VERSION }}.pom"
+        jar cf "dist-bundle/libusb4java-${{ env.VERSION }}-bundle.jar" -C bundle .
+    - uses: actions/upload-artifact@v7
+      with:
+        name: bundle
+        path: dist-bundle/libusb4java-${{ env.VERSION }}-bundle.jar
+        if-no-files-found: error
         archive: false

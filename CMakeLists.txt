@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 project(usb4java C)
-set(PROJECT_VERSION 1.3.1)
+set(PROJECT_VERSION 1.0.30)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/.cmake/Modules/")
 
 find_package(JNI REQUIRED)

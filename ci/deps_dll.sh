@@ -18,7 +18,7 @@ MSBUILD="$(vswhere -latest -find 'MSBuild\**\Bin\MSBuild.exe' | head -n1)"
 # mangling the backslash path and the /p:... arguments before they reach MSBuild.
 VCPROJ_WIN="$(cygpath -w "${LIBUSB_SRC}/msvc/libusb_static.vcxproj")"
 export MSYS2_ARG_CONV_EXCL="*"
-"${MSBUILD}" "${VCPROJ_WIN}" /p:Configuration=Release /p:Platform=x64 /m /v:minimal
+"${MSBUILD}" "${VCPROJ_WIN}" /p:Configuration=Release /p:Platform=x64 /p:RuntimeLibrary=MT /m /v:minimal
 
 # msbuild emits the .lib under <src>/build/<toolset>/<platform>/<config>/lib/
 LIB_ARTIFACT="$(find "${LIBUSB_SRC}/build" -name 'libusb-1.0.lib' 2>/dev/null | head -n1)"
