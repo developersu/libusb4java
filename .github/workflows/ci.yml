@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  VERSION: 1.0.30
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -14,39 +17,40 @@ jobs:
       fail-fast: false
       matrix:
         include:
-## windows arm
+## windows arm; should be using `vcpkg install libusb:arm64-windows-static`. Probably requires custom libusbK
 #         - os: windows-11-arm
-#           targetos: win32
-#           targetarch: aarch64
+#           target: win32-aarch64
 #           ext: dll
 # win32-x86-64
          - os: windows-latest
            target: win32-x86-64
            ext: dll
-# linux-x86-64          
-#         - os: ubuntu-latest
-#           target: linux-x86-64
-#           ext: so
+           static: true
+# linux-x86-64
+         - os: ubuntu-latest
+           target: linux-x86-64
+           ext: so
+           static: true
 ## arm | armhf astr32 armv7l
 #         - os: ubuntu-24.04-arm
-#           targetos: linux
-#           targetarch: armhf
+#           target: linux-armhf
 #           ext: so
+#           static: true
 ## linux-aarch64
 #         - os: ubuntu-24.04-arm
-#           targetos: linux
-#           targetarch: aarch64
+#           target: linux-aarch64
 #           ext: so
+#           static: true
 ## darwin-x86-64
-#         - os: macos-15-intel
-#           targetos: darwin
-#           targetarch: x86-64
-#           ext: dylib
+         - os: macos-15-intel
+           target: darwin-x86-64
+           ext: dylib
+           static: true
 ## darwin-arm-64
-#         - os: macos-14
-#           targetos: darwin
-#           targetarch: aarch64
-#           ext: dylib
+#        - os: macos-14
+#          target: darwin-aarch64
+#          ext: dylib
+#          static: true
 
     steps:
     - uses: actions/checkout@v7
@@ -63,17 +67,15 @@ jobs:
       run: >-
         mkdir build && 
         cd build && 
-        cmake .. && 
-        cmake --build . --config Release && 
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DLibUsb_USE_STATIC_LIBS=${{ matrix.static }} -DLibUsb_LDFLAGS="${{ env.LIBUSB_LDFLAGS }}" &&
+        cmake --build . --config Release &&
         cd .. && 
         mkdir -p publish/org/usb4java/${{ matrix.target }} &&
-        (mv build/src/*usb4java.${{ matrix.ext }}         publish/org/usb4java/${{ matrix.target }}/libusb4java.${{ matrix.ext }} ||
-         mv build/src/Release/*usb4java.${{ matrix.ext }} publish/org/usb4java/${{ matrix.target }}/libusb4java.${{ matrix.ext }}) &&
+        mv build/out/libusb4java.${{ matrix.ext }} publish/org/usb4java/${{ matrix.target }}/libusb4java.${{ matrix.ext }} &&
         cd publish &&
-        jar cf ./libusb4java-1.0.30-${{ matrix.target }}.jar * || 
-        die
+        jar cf ./libusb4java-${{ env.VERSION }}-${{ matrix.target }}.jar * 
 
     - uses: actions/upload-artifact@v7
       with:
-        path: publish/libusb4java-1.0.30-${{ matrix.target }}.jar
+        path: publish/libusb4java-${{ env.VERSION }}-${{ matrix.target }}.jar
         archive: false

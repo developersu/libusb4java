@@ -10,6 +10,10 @@ find_package(LibUsb REQUIRED)
 include_directories(${JNI_INCLUDE_DIRS})
 include_directories(${LibUsb_INCLUDE_DIRS})
 
+if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
+    set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG")
+endif()
+
 if(CMAKE_COMPILER_IS_GNUCC)
     add_definitions(-Wall -Werror -std=c99)
 endif()
