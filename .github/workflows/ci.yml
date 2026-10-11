@@ -21,8 +21,7 @@ jobs:
 #           ext: dll
 # win32-x86-64
          - os: windows-latest
-           targetos: win32
-           targetarch: x86-64
+           target: win32-x86-64
            ext: dll
 # linux-x86-64          
 #         - os: ubuntu-latest
