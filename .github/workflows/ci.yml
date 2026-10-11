@@ -68,8 +68,8 @@ jobs:
         cmake --build . --config Release && 
         cd .. && 
         mkdir -p publish/org/usb4java/{{ matrix.target }} &&
-        (mv build/src/*usb4java.{{ matrix.ext }}         publish/org/usb4java/{{ matrix.target }}/libusb4java.${{ matrix.ext }} |
-         mv build/src/Release/*usb4java.{{ matrix.ext }} publish/org/usb4java/{{ matrix.target }}/libusb4java.${{ matrix.ext }}) &&
+        (mv build/src/*usb4java.{{ matrix.ext }}         publish/org/usb4java/{{ matrix.target }}/ |
+         mv build/src/Release/*usb4java.{{ matrix.ext }} publish/org/usb4java/{{ matrix.target }}/) &&
         cd publish &&
         jar cf ./libusb4java-1.0.30-{{ matrix.target }}.jar *
 
