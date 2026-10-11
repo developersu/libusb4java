@@ -17,40 +17,40 @@ jobs:
       fail-fast: false
       matrix:
         include:
-# windows arm; should be using `vcpkg install libusb:arm64-windows-static`. Probably requires custom libusbK
-         - os: windows-11-arm
-           target: win32-aarch64
-           ext: dll
-# win32-x86-64
-         - os: windows-latest
-           target: win32-x86-64
-           ext: dll
-           static: true
-# linux-x86-64
-         - os: ubuntu-latest
-           target: linux-x86-64
-           ext: so
-           static: true
-# arm | armhf astr32 armv7l
-         - os: ubuntu-24.04-arm
-           target: linux-armhf
-           ext: so
-           static: true
-# linux-aarch64
-         - os: ubuntu-24.04-arm
-           target: linux-aarch64
-           ext: so
-           static: true
-# darwin-x86-64
-         - os: macos-15-intel
-           target: darwin-x86-64
-           ext: dylib
-           static: true
-# darwin-arm-64
-        - os: macos-14
-          target: darwin-aarch64
-          ext: dylib
-          static: true
+# # windows arm; should be using `vcpkg install libusb:arm64-windows-static`. Probably requires custom libusbK
+#          - os: windows-11-arm
+#            target: win32-aarch64
+#            ext: dll
+#  win32-x86-64
+          - os: windows-latest
+            target: win32-x86-64
+            ext: dll
+            static: true
+#  linux-x86-64
+          - os: ubuntu-latest
+            target: linux-x86-64
+            ext: so
+            static: true
+#  arm | armhf astr32 armv7l
+          - os: ubuntu-24.04-arm
+            target: linux-armhf
+            ext: so
+            static: true
+#  linux-aarch64
+          - os: ubuntu-24.04-arm
+            target: linux-aarch64
+            ext: so
+            static: true
+#  darwin-x86-64
+          - os: macos-15-intel
+            target: darwin-x86-64
+            ext: dylib
+            static: true
+#  darwin-arm-64
+          - os: macos-14
+            target: darwin-aarch64
+            ext: dylib
+            static: true
 
     steps:
     - uses: actions/checkout@v7
