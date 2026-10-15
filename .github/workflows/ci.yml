@@ -32,7 +32,7 @@ jobs:
             static: true
 #  arm | armhf astr32 armv7l
           - os: ubuntu-24.04-arm
-            target: linux-armhf
+            target: linux-arm
             ext: so
             static: true
 #  linux-aarch64
@@ -76,29 +76,28 @@ jobs:
 
     - uses: actions/upload-artifact@v7
       with:
-        name: libusb4java-${{ matrix.target }}
         path: publish/libusb4java-${{ env.VERSION }}-${{ matrix.target }}.jar
         if-no-files-found: error
         archive: false
 
-  bundle:
-    needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/download-artifact@v7
-      with:
-        path: jars
-        merge-multiple: true
-    - name: Pack bundle jar
-      run: |
-        mkdir -p bundle
-        cp jars/libusb4java-${{ env.VERSION }}-*.jar bundle/
-        cp pom.xml "bundle/libusb4java-${{ env.VERSION }}.pom"
-        jar cf "dist-bundle/libusb4java-${{ env.VERSION }}-bundle.jar" -C bundle .
-    - uses: actions/upload-artifact@v7
-      with:
-        name: bundle
-        path: dist-bundle/libusb4java-${{ env.VERSION }}-bundle.jar
-        if-no-files-found: error
-        archive: false
+#  bundle:
+#    needs: build
+##    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+#    runs-on: ubuntu-latest
+#    steps:
+#    - uses: actions/download-artifact@v7
+#      with:
+#        path: jars
+#        merge-multiple: true
+#    - name: Pack bundle jar
+#      run: |
+#        mkdir -p bundle
+#        cp jars/libusb4java-${{ env.VERSION }}-*.jar bundle/
+#        cp pom.xml "bundle/libusb4java-${{ env.VERSION }}.pom"
+#        jar cf "dist-bundle/libusb4java-${{ env.VERSION }}-bundle.jar" -C bundle .
+#    - uses: actions/upload-artifact@v7
+#      with:
+#        name: bundle
+#        path: dist-bundle/libusb4java-${{ env.VERSION }}-bundle.jar
+#        if-no-files-found: error
+#        archive: false
