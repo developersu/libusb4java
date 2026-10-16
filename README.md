@@ -1,32 +1,64 @@
-This is the source code of the JNI wrapper for libusb. usb4java
-already includes prebuilt libraries for the following platforms:
+Fork of the https://github.com/usb4java/libusb4java
 
-* linux-x86
-* linux-x86-64
-* linux-arm
-* linux-armel
-* linux-aarch64
-* win32-x86
-* win32-x86-64
-* darwin-x86-64
-* darwin-arm-64
+Statically-linked JNI wrapper for libusb used by usb4java
 
-If you need the library on an other platform then you can easily compile it
-yourself.  On a Unix-compatible operating system you only need the Java JDK,
-an up-to-date libusb library version, the GNU C compiler and cmake.  When
-everything is correctly installed then you should be able to build the
-library with the following commands:
+### Usage
+```java
+<dependencies>
+        <dependency>
+            <groupId>org.usb4java</groupId>
+            <artifactId>usb4java</artifactId>
+            <version>1.3.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.usb4java</groupId>
+                    <artifactId>libusb4java</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>compile</scope>
+        </dependency>
 
-    $ mkdir build
-    $ cd build
-    $ cmake ..
-    $ make
-
-When compilation was successful then you can find the library in the
-`build/src` directory.
-
-usb4java searches for the library in the CLASSPATH directory
-`org/libusb4java/<OS>-<ARCH>/`. On a 32 bit x86 linux machine for
-example the directory name is `org/libusb4java/linux-x86`. Usually
-you can find the required name in the exception thrown by usb4java when it
-does not find the required library.
+        <dependency>
+            <groupId>ru.redrise</groupId>
+            <artifactId>libusb4java</artifactId>
+            <classifier>linux-x86-64</classifier>
+            <version>1.0.30</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.redrise</groupId>
+            <artifactId>libusb4java</artifactId>
+            <classifier>win32-x86-64</classifier>
+            <version>1.0.30</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.redrise</groupId>
+            <artifactId>libusb4java</artifactId>
+            <classifier>linux-arm</classifier>
+            <version>1.0.30</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.redrise</groupId>
+            <artifactId>libusb4java</artifactId>
+            <classifier>linux-aarch64</classifier>
+            <version>1.0.30</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.redrise</groupId>
+            <artifactId>libusb4java</artifactId>
+            <classifier>darwin-x86-64</classifier>
+            <version>1.0.30</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.redrise</groupId>
+            <artifactId>libusb4java</artifactId>
+            <classifier>darwin-aarch64</classifier>
+            <version>1.0.30</version>
+            <scope>compile</scope>
+        </dependency>
+</dependencies>
+```

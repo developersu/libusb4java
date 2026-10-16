@@ -2,42 +2,54 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, ci ]
   pull_request:
     branches: [ master ]
+
+env:
+  VERSION: 1.0.30
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
         include:
-# linux-x86-64          
-         - os: ubuntu-latest
-           targetos: linux
-           targetarch: amd64
-# arm | armhf astr32 armv7l
-         - os: ubuntu-24.04-arm
-           targetos: linux
-           targetarch: armhf
-# linux-aarch64
-         - os: ubuntu-24.04
-           targetos: linux
-           targetarch: arm64
-# win32-x86-64
-         - os: windows-latest
-           targetos: win32
-           targetarch: x64
-# darwin-x86-64
-         - os: macos-15-intel
-           targetos: apple
-           targetarch: amd64
-# darwin-arm-64
-         - os: macos-14
-           targetos: apple
-           targetarch: arm64
+# # windows arm; should be using `vcpkg install libusb:arm64-windows-static`. Probably requires custom libusbK
+#          - os: windows-11-arm
+#            target: win32-aarch64
+#            ext: dll
+#  win32-x86-64
+          - os: windows-latest
+            target: win32-x86-64
+            ext: dll
+            static: true
+#  linux-x86-64
+          - os: ubuntu-latest
+            target: linux-x86-64
+            ext: so
+            static: true
+#  arm | armhf astr32 armv7l
+          - os: ubuntu-24.04-arm
+            target: linux-arm
+            ext: so
+            static: true
+#  linux-aarch64
+          - os: ubuntu-24.04-arm
+            target: linux-aarch64
+            ext: so
+            static: true
+#  darwin-x86-64
+          - os: macos-15-intel
+            target: darwin-x86-64
+            ext: dylib
+            static: true
+#  darwin-arm-64
+          - os: macos-14
+            target: darwin-aarch64
+            ext: dylib
+            static: true
 
     steps:
     - uses: actions/checkout@v7
@@ -48,12 +60,44 @@ jobs:
         java-version: 25
 
     - name: Install dependencies
-      run: bash ci/deps_${{ matrix.targetos }}.sh
+      run: bash ci/deps_${{ matrix.ext }}.sh
 
     - name: Build artifacts
-      run: mkdir build && cd build && cmake .. && cmake --build . --config Release && cd .. && jshell ci/mk-artifact.jsh
+      run: >-
+        mkdir build && 
+        cd build && 
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DLibUsb_USE_STATIC_LIBS=${{ matrix.static }} -DLibUsb_LDFLAGS="${{ env.LIBUSB_LDFLAGS }}" &&
+        cmake --build . --config Release &&
+        cd .. && 
+        mkdir -p publish/org/usb4java/${{ matrix.target }} &&
+        mv build/out/libusb4java.${{ matrix.ext }} publish/org/usb4java/${{ matrix.target }}/libusb4java.${{ matrix.ext }} &&
+        cd publish &&
+        jar cf ./libusb4java-${{ env.VERSION }}-${{ matrix.target }}.jar * 
 
     - uses: actions/upload-artifact@v7
       with:
-        name: ${{ matrix.targetos }}-${{ matrix.targetarch }}
-        path: publish/*
+        path: publish/libusb4java-${{ env.VERSION }}-${{ matrix.target }}.jar
+        if-no-files-found: error
+        archive: false
+
+#  bundle:
+#    needs: build
+##    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+#    runs-on: ubuntu-latest
+#    steps:
+#    - uses: actions/download-artifact@v7
+#      with:
+#        path: jars
+#        merge-multiple: true
+#    - name: Pack bundle jar
+#      run: |
+#        mkdir -p bundle
+#        cp jars/libusb4java-${{ env.VERSION }}-*.jar bundle/
+#        cp pom.xml "bundle/libusb4java-${{ env.VERSION }}.pom"
+#        jar cf "dist-bundle/libusb4java-${{ env.VERSION }}-bundle.jar" -C bundle .
+#    - uses: actions/upload-artifact@v7
+#      with:
+#        name: bundle
+#        path: dist-bundle/libusb4java-${{ env.VERSION }}-bundle.jar
+#        if-no-files-found: error
+#        archive: false

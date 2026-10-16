@@ -30,6 +30,11 @@
 # See COPYING file for copying conditions.
 # ============================================================================
 
+if(DEFINED ENV{LIBUSB_ROOT})
+    set(LibUsb_LIBRARY_HINTS "$ENV{LIBUSB_ROOT}/lib")
+    set(LibUsb_INCLUDE_HINTS "$ENV{LIBUSB_ROOT}/include")
+endif()
+
 # Change the find-library suffix order in case we prefer to use static libs
 set(LibUsb_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
 if (LibUsb_USE_STATIC_LIBS)
@@ -40,7 +45,15 @@ if (LibUsb_USE_STATIC_LIBS)
     endif()
 endif()
 
-set(LibUsb_LIBRARY_NAMES "usb-1.0")
+# find_library prepends CMAKE_FIND_LIBRARY_PREFIXES to each name. On Unix that
+# prefix is "lib", so the unprefixed name "usb-1.0" resolves to libusb-1.0.{a,so,
+# dylib}. On Windows the prefix is empty, so the name must already carry the "lib"
+# prefix ("libusb-1.0") to resolve to libusb-1.0.lib.
+if(WIN32)
+    set(LibUsb_LIBRARY_NAMES "libusb-1.0")
+else()
+    set(LibUsb_LIBRARY_NAMES "usb-1.0")
+endif()
 
 # Search libraries and include directories with pkg-config when possible
 find_package(PkgConfig QUIET)
@@ -48,10 +61,13 @@ if(PKG_CONFIG_FOUND)
     pkg_check_modules(PkgConfigLibUsb libusb-1.0)
     if (PkgConfigLibUsb_FOUND)
         if(LibUsb_USE_STATIC_LIBS)
-            set(LibUsb_LIBRARY_NAMES ${PkgConfigLibUsb_STATIC_LIBRARIES})
-            set(LibUsb_INCLUDE_HINTS ${PkgConfigLibUsb_STATIC_INCLUDE_DIRS})
-            set(LibUsb_LIBRARY_HINTS ${PkgConfigLibUsb_STATIC_LIBRARY_DIRS})
-            set(LibUsb_LDFLAGS ${PkgConfigLibUsb_STATIC_LDFLAGS_OTHER})
+            # Static: leave LibUsb_LIBRARY_NAMES as "libusb-1.0" (set above) so that
+            # find_library (with the .a/.lib suffix preference set above) plus the
+            # LIBUSB_ROOT hints locate libusb-1.0.a / libusb-1.0.lib. Do NOT use
+            # PkgConfigLibUsb_STATIC_LIBRARIES: libusb's .pc has no Static-Libraries
+            # field and pkg_check_modules was not called with STATIC, so it is empty
+            # and would break the search. Also do not clobber LibUsb_LDFLAGS or the
+            # LIBUSB_ROOT hints here.
         else()
             set(LibUsb_LIBRARY_NAMES ${PkgConfigLibUsb_LIBRARIES})
             set(LibUsb_INCLUDE_HINTS ${PkgConfigLibUsb_INCLUDE_DIRS})
