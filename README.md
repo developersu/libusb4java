@@ -1,4 +1,5 @@
 Fork of the https://github.com/usb4java/libusb4java
+
 Statically-linked JNI wrapper for libusb used by usb4java
 
 ### Usage
@@ -7,7 +8,7 @@ Statically-linked JNI wrapper for libusb used by usb4java
         <dependency>
             <groupId>org.usb4java</groupId>
             <artifactId>usb4java</artifactId>
-            <version>1.3.0</version>         <!-- Must be 1.2.0 for macOS lower than Mojave-->
+            <version>1.3.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.usb4java</groupId>
