@@ -30,11 +30,6 @@ jobs:
             target: linux-x86-64
             ext: so
             static: true
-#  arm | armhf astr32 armv7l
-          - os: ubuntu-24.04-arm
-            target: linux-arm
-            ext: so
-            static: true
 #  linux-aarch64
           - os: ubuntu-24.04-arm
             target: linux-aarch64
@@ -77,6 +72,30 @@ jobs:
     - uses: actions/upload-artifact@v7
       with:
         path: publish/libusb4java-${{ env.VERSION }}-${{ matrix.target }}.jar
+        if-no-files-found: error
+        archive: false
+
+  # linux-arm is a genuine 32-bit armv7 build for Raspberry Pi, so it is NOT
+  # part of the matrix (an aarch64 runner cannot produce it). ci/build_arm.sh
+  # cross-compiles everything inside a native amd64 debian:bookworm docker
+  # container (gcc-arm-linux-gnueabihf, glibc 2.36 = Raspberry Pi OS), which
+  # works on any x86_64 runner without qemu/binfmt.
+  build-arm:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+    - name: Set up JDK
+      uses: actions/setup-java@v5
+      with:
+        distribution: jetbrains
+        java-version: 25
+
+    - name: Build artifacts
+      run: bash ci/build_arm.sh
+
+    - uses: actions/upload-artifact@v7
+      with:
+        path: target/libusb4java-${{ env.VERSION }}-linux-arm.jar
         if-no-files-found: error
         archive: false
 
