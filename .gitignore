@@ -3,6 +3,10 @@
 .vscode
 target
 /build
+arm-deps
+arm-prefix
+libusb-build
+build-arm
 /.vs
 /out/build/x64-Debug
 target
